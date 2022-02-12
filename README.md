@@ -11,4 +11,8 @@ The usage of this script is pretty straigt forward:
 
 Thats basically all there is to it. No need to configure the script for your screen resolution it just works out of the box.
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/DaLeberkasPepi)
+#Shard Upgrader
+CTRL + 8
+You must set up your inventory like the picture.
+
+https://github.com/thauch/CubeConverter/blob/development/ShardUpgrader.png?raw=true
