@@ -27,7 +27,7 @@ global ColumnCount := 0
 global D3ScreenResolution
 ,NativeDiabloHeight := 1440
 ,NativeDiabloWidth := 3440
-,#ctrls = 4
+,#ctrls = 5
 
 IfNotExist, Hotkeys.ini
 FileAppend,
@@ -39,6 +39,7 @@ Globalsleep=50
 2=^6
 3=^7
 4=j
+5=^8
 ), Hotkeys.ini
 
 IniRead, Globalsleep, Hotkeys.ini, Settings, Globalsleep
@@ -55,6 +56,9 @@ Loop,% #ctrls
 	
 	If (A_Index == 4)
 		GUI, Add, Text, xm, Hotkey for Reforge:
+
+	If (A_Index == 5)
+		GUI, Add, Text, xm, Hotkey for Shard Upgrades:
 	
 	IniRead, savedHK%A_Index%, Hotkeys.ini, Hotkeys, %A_Index%, %A_Space%	;Check for saved hotkeys in INI file.
 	
@@ -125,6 +129,14 @@ Label4:		;Hotkey for Reforge
 	}
 Return
 
+Label5:		;Hotkey for Shard Upgrade
+	IfWinNotActive, CubeConverter Hotkeys
+	{
+		global ItemSize := 1
+		KanaisCube("ShardUpgrade")
+	}
+Return
+
 KanaisCube(Setting)
 {
 	GUIControlGet, Globalsleep
@@ -186,6 +198,39 @@ KanaisCube(Setting)
 		MouseMove, TopLeftInv[1], TopLeftInv[2]
 	}
 
+	If (Setting == "ShardUpgrade")
+	{
+		Cycles := 2 ; Initially add cycles to include Hellforge Ember slots
+		EmberUseCount := 0
+		RowCount++ ; Skip second Hellforge Ember slot
+		Loop {
+			++Cycles
+			RowCount++
+			UpgradeCount := 0
+			Loop {
+				If (RowCount > 5) && (ColumnCount < 9)
+				{
+					RowCount := 0
+					ColumnCount := ColumnCount + ItemSize
+				}
+				If (EmberUseCount < 100) {
+					MouseClick, right, TopLeftInv[1], TopLeftInv[2]
+				}
+				Else{
+					MouseClick, right, TopLeftInv[1], TopLeftInv[2]+SlotX
+				}
+				XClick := TopLeftInv[1]+SlotX*(ColumnCount)
+				YClick := TopLeftInv[2]+SlotY*(RowCount)
+				Sleep % Globalsleep + 125
+				MouseClick, left, XClick, YClick
+				Sleep % Globalsleep + 125
+				UpgradeCount++
+				EmberUseCount++
+			}Until UpgradeCount == 3
+		}Until Cycles>=Columns*Rows/ItemSize
+	}
+
+
 	If (Setting != "Reforge"){
 	Loop
 	{
@@ -242,6 +287,7 @@ KanaisCube(Setting)
 		}
 	}	Until Cycles>=Columns*Rows/ItemSize
 	}
+
 }
 
 ConvertCoordinates(ByRef Array)
